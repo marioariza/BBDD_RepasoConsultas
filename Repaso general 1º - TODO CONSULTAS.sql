@@ -325,41 +325,86 @@ SELECT f.nombre, MAX(p.precio), MIN(p.precio), AVG(p.precio) FROM fabricante f L
  
 #18. Muestra el precio máximo, precio mínimo, precio medio y el número total de productos de los fabricantes que tienen un precio medio superior a 200€. No es necesario mostrar el nombre del fabricante, con el código del fabricante es suficiente.
 
-SELECT f.codigo, MAX(p.precio), MIN(p.precio), COUNT(p.nombre) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante AND (AVG(p.precio > 200)) GROUP BY f.nombre;
+SELECT f.codigo, MAX(p.precio), MIN(p.precio), COUNT(p.nombre) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING AVG(p.precio) > 200;
 
 #19. Muestra el nombre de cada fabricante, junto con el precio máximo, precio mínimo, precio medio y el  número total de productos de los fabricantes que tienen un precio medio superior a 200€. Es necesario mostrar el nombre del fabricante.
 
-SELECT f.nombre, MAX(p.precio), MIN(p.precio), AVG(p.precio), COUNT(p.nombre) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE AVG(p.precio > 200) GROUP BY f.nombre;
+SELECT f.nombre, MAX(p.precio), MIN(p.precio), AVG(p.precio), COUNT(p.nombre) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING AVG(p.precio) > 200;
 
 #20. Calcula el número de productos que tienen un precio mayor o igual a 180€.
+
+SELECT COUNT(p.nombre) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante AND p.precio >= 180;
+
 #21. Calcula el número de productos que tiene cada fabricante con un precio mayor o igual a 180€.
+
+SELECT f.nombre, COUNT(p.nombre) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING AVG(p.precio) >= 180;
+
 #22. Lista el precio medio los productos de cada fabricante, mostrando solamente el código del fabricante.
+
+SELECT f.codigo, AVG(p.precio) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre;
+
 #23. Lista el precio medio los productos de cada fabricante, mostrando solamente el nombre del fabricante.
+
+SELECT f.nombre, AVG(p.precio) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre;
+
 #24. Lista los nombres de los fabricantes cuyos productos tienen un precio medio mayor o igual a 150€.
-25. Devuelve un listado con los nombres de los fabricantes que tienen 2 o más productos.
-26. Devuelve un listado con los nombres de los fabricantes y el número de productos que tiene cada uno con
+
+SELECT f.nombre, AVG(p.precio) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING AVG(p.precio) >= 150;
+
+#25. Devuelve un listado con los nombres de los fabricantes que tienen 2 o más productos.
+
+SELECT f.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING COUNT(p.nombre) >= 2;
+
+/*26. Devuelve un listado con los nombres de los fabricantes y el número de productos que tiene cada uno con
 un precio superior o igual a 220 €. No es necesario mostrar el nombre de los fabricantes que no tienen
-productos que cumplan la condición.
-27. Devuelve un listado con los nombres de los fabricantes y el número de productos que tiene cada uno con
+productos que cumplan la condición.*/
+
+SELECT f.nombre, COUNT(p.nombre) FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante AND p.precio >= 220 GROUP BY f.nombre;
+
+/*27. Devuelve un listado con los nombres de los fabricantes y el número de productos que tiene cada uno con
 un precio superior o igual a 220 €. El listado debe mostrar el nombre de todos los fabricantes, es decir, si
 hay algún fabricante que no tiene productos con un precio superior o igual a 220€ deberá aparecer en el
-listado con un valor igual a 0 en el número de productos.
-28. Devuelve un listado con los nombres de los fabricantes donde la suma del precio de todos sus productos
-es superior a 1000 €.
-29. Devuelve un listado con el nombre del producto más caro que tiene cada fabricante. El resultado debe
+listado con un valor igual a 0 en el número de productos.*/
+
+SELECT f.nombre, COUNT(p.nombre) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante AND p.precio >= 220 GROUP BY f.nombre;
+
+/*28. Devuelve un listado con los nombres de los fabricantes donde la suma del precio de todos sus productos
+es superior a 1000 €.*/
+
+SELECT f.nombre FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre HAVING SUM(p.precio) > 1000;
+
+/*29. Devuelve un listado con el nombre del producto más caro que tiene cada fabricante. El resultado debe
 tener tres columnas: nombre del producto, precio y nombre del fabricante. El resultado tiene que estar
 ordenado alfabéticamente de menor a mayor por el nombre del fabricante.*/
 
+SELECT p.nombre, MAX(p.precio), f.nombre FROM fabricante f, producto p WHERE f.codigo = p.codigo_fabricante GROUP BY f.nombre ORDER BY f.nombre ASC;
+
 # Modificaciones
-/*1. Inserta un nuevo fabricante indicando su código y su nombre.
-2. Inserta un nuevo fabricante indicando solamente su nombre.
-3. Inserta un nuevo producto asociado a uno de los nuevos fabricantes. La sentencia de inserción debe
-incluir: código, nombre, precio y código_fabricante.
-4. Inserta un nuevo producto asociado a uno de los nuevos fabricantes. La sentencia de inserción debe
-incluir: nombre, precio y código_fabricante.
-5. Crea una nueva tabla con el nombre fabricante_productos que tenga las siguientes columnas:
+#1. Inserta un nuevo fabricante indicando su código y su nombre.
+
+INSERT INTO fabricante VALUES(0, "Microsoft"); 
+
+#2. Inserta un nuevo fabricante indicando solamente su nombre.
+
+INSERT INTO fabricante(nombre) VALUES("Apple");
+
+/*3. Inserta un nuevo producto asociado a uno de los nuevos fabricantes. La sentencia de inserción debe
+incluir: código, nombre, precio y código_fabricante.*/
+
+INSERT INTO producto VALUES(0,"Iphone 14", 1006.00, 11);
+
+/*4. Inserta un nuevo producto asociado a uno de los nuevos fabricantes. La sentencia de inserción debe
+incluir: nombre, precio y código_fabricante.*/
+
+INSERT INTO producto(nombre, precio, codigo_fabricante) VALUES ("Microsoft Surface Laptop Go 2", 769, 10);
+
+/*5. Crea una nueva tabla con el nombre fabricante_productos que tenga las siguientes columnas:
 nombre_fabricante, nombre_producto y precio. Una vez creada la tabla inserta todos los registros
-de la base de datos tienda en esta tabla haciendo uso de única operación de inserción.
+de la base de datos tienda en esta tabla haciendo uso de única operación de inserción.*/
+
+CREATE TABLE fabricante_productos (
+
+
 6. Crea una vista con el nombre vista_fabricante_productosque tenga las siguientes columnas:
 nombre_fabricante, nombre_producto y precio.
 7. Elimina el fabricante Asus. ¿Es posible eliminarlo? Si no fuese posible, ¿qué cambios debería realizar para
@@ -369,7 +414,7 @@ para que fuese posible borrarlo?
 9. Actualiza el código del fabricante Lenovo y asígnale el valor 20. ¿Es posible actualizarlo? Si no fuese posible, ¿qué cambios debería realizar para que fuese actualizarlo?
 10. Actualiza el código del fabricante Huawei y asígnale el valor 30. ¿Es posible actualizarlo? Si no fuese posible, ¿qué cambios debería realizar para que fuese actualizarlo?
 11. Actualiza el precio de todos los productos sumándole 5 € al precio actual.
-12. Elimina todas las impresoras que tienen un precio menor de 200 €.*/
+12. Elimina todas las impresoras que tienen un precio menor de 200 €.
 
 
 -- Subconsultas (En la cláusula WHERE)
